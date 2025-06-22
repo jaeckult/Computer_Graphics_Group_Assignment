@@ -28,3 +28,36 @@ const artists = [
   'Aida Muluneh',
   'Aida Muluneh',
 ];
+
+const textureLoader = new THREE.TextureLoader();
+const leftArrowImage = textureLoader.load(left.png);
+const rightArrowImage = textureLoader.load(right.png);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setAnimationLoop(animate);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.toneMapping = THREE.NeutralToneMapping;
+renderer.toneMappingExposure = 2;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+
+const root = new THREE.Object3D();
+scene.add(root);
+
+const count = 6;
+for (let i = 0; i < count; i++) {
+  const image = textureLoader.load(images[i]);
+
+  const baseNode = new THREE.Object3D();
+  baseNode.rotation.y = 2 * Math.PI * (i / count);
+
+  const border = new THREE.Mesh(
+    new THREE.BoxGeometry(3.2, 2.2, 0.005),
+    new THREE.MeshStandardMaterial({ color: 0x303030 })
+  );
+  border.position.z = -4;
+  baseNode.add(border);
