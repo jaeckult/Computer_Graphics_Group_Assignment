@@ -61,3 +61,31 @@ for (let i = 0; i < count; i++) {
   );
   border.position.z = -4;
   baseNode.add(border);
+
+  const artwork = new THREE.Mesh(
+    new THREE.BoxGeometry(3, 2, 0.01),
+    new THREE.MeshStandardMaterial({ map: image })
+  );
+  artwork.position.z = -4;
+  baseNode.add(artwork);
+
+  const leftArrow = new THREE.Mesh(
+    new THREE.BoxGeometry(0.3, 0.3, 0.01),
+    new THREE.MeshStandardMaterial({ map: leftArrowImage, transparent: true })
+  );
+  leftArrow.name = 'left';
+  leftArrow.userData = i;
+  leftArrow.position.set(2.9, 0, -4);
+  baseNode.add(leftArrow);
+
+  const rightArrow = new THREE.Mesh(
+    new THREE.BoxGeometry(0.3, 0.3, 0.01),
+    new THREE.MeshStandardMaterial({ map: rightArrowImage, transparent: true })
+  );
+  rightArrow.name = 'right';
+  rightArrow.userData = i;
+  rightArrow.position.set(-2.9, 0, -4);
+  baseNode.add(rightArrow);
+
+  root.add(baseNode);
+}
