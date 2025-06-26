@@ -30,8 +30,8 @@ const artists = [
 ];
 
 const textureLoader = new THREE.TextureLoader();
-const leftArrowImage = textureLoader.load(left.png);
-const rightArrowImage = textureLoader.load(right.png);
+const leftArrowImage = textureLoader.load(`left.png`);
+const rightArrowImage = textureLoader.load(`right.png`);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -89,3 +89,89 @@ for (let i = 0; i < count; i++) {
 
   root.add(baseNode);
 }
+
+const spotlight = new THREE.SpotLight(0xffffff, 100.0, 10, 0.65, 1);
+spotlight.position.set(0, 5, 0);
+spotlight.target.position.set(0, 1, -5);
+scene.add(spotlight);
+scene.add(spotlight.target);
+
+const mirror = new Reflector(
+  new THREE.CircleGeometry(40, 64),
+  {
+    color: 0x505050,
+    textureWidth: window.innerWidth * window.devicePixelRatio,
+    textureHeight: window.innerHeight * window.devicePixelRatio,
+
+  }
+);
+
+mirror.position.set(0, -1.1, 0);
+mirror.rotateX(-Math.PI / 2);
+scene.add(mirror);
+
+function animate() {
+  TWEEN.update();
+  renderer.render(scene, camera);
+}
+
+function rotateGallery(index, direction) {
+  const newRotationY = root.rotation.y + (direction * 2 * Math.PI) / count;
+
+  const titleElement = document.getElementById('title');
+  const artistElement = document.getElementById('artist')
+
+  new TWEEN.Tween(root.rotation)
+    .to({ y: newRotationY }, 1500)
+    .easing(TWEEN.Easing.Quadratic.InOut)
+    .start()
+    .onStart(() => {
+      titleElement.style.opacity = 0;
+      artistElement.style.opacity = 0;
+    })
+    .onComplete(() => {
+      titleElement.innerText = titles[index];
+      artistElement.innerText = artists[index];
+      titleElement.style.opacity = 1;
+      artistElement.style.opacity = 1;
+    });
+}
+
+window.addEventListener('wheel', (ev) => {
+  root.rotation.y += ev.wheelDelta * 0.0001;
+});
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  mirror.getRenderTarget().setSize(
+    window.innerWidth * window.devicePixelRatio,
+    window.innerHeight * window.devicePixelRatio
+  );
+});
+
+window.addEventListener('click', (ev) => {
+  const mouse = new THREE.Vector2();
+  mouse.x = (ev.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(ev.clientY / window.innerHeight) * 2 + 1;
+
+  const raycaster = new THREE.Raycaster();
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(root.children, true);
+
+  if (intersects.length > 0) {
+    const clickedObject = intersects[0].object;
+    const index = clickedObject.userData;
+
+    if (clickedObject.name === 'left' || clickedObject.name === 'right') {
+      const direction = clickedObject.name === 'left' ? -1 : 1;
+      rotateGallery(index, direction);
+    }
+  }
+});
+
+document.getElementById('title').innerText = titles[0];
+document.getElementById('artist').innerText = artists[0];
