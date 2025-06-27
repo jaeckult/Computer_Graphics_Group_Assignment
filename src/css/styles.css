@@ -1,0 +1,26 @@
+body {
+  margin: 0;
+}
+
+h1,
+h2 {
+  color: rgb(245, 246, 245);
+  text-align: center;
+  width: 100%;
+  font-family: 'Inter';
+  font-weight: 100;
+  transition: opacity 0.5s ease-in-out;
+}
+
+#title {
+  position: fixed;
+  font-size: 4em;
+  top: 0.02em;
+}
+
+#artist {
+  position: fixed;
+  font-size: 2em;
+  color: rgb(247, 246, 249);
+  top: 3.5em;
+} 
